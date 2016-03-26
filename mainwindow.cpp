@@ -81,7 +81,7 @@ void MainWindow::on_deleteCharButton_clicked()
 
 void MainWindow::on_clearAllCharButton_clicked()
 {
-    ui->charTable->clear();
+    ui->charTable->setRowCount(0);
 }
 
 void MainWindow::on_startStopButton_clicked()
