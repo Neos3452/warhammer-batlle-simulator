@@ -76,7 +76,8 @@ bool Character::attack(const DiceRoller& dice)
     // hit enemy with all attacks
     for (int attackCounter = attacks; attackCounter > 0; --attackCounter) {
         const auto roll = dice.roll(100);
-        if (roll <= skill && !target->parry(dice) && !target->evade(dice)) {
+        if (roll <= skill && (attackingWeapon == AttackingWeapon::Ranged
+            || (!target->parry(dice) && !target->evade(dice)))) {
             constexpr const auto kDmgRoll = 10;
             auto dmg = dice.roll(kDmgRoll);
             if (kDmgRoll == dmg) {
