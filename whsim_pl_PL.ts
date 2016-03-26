@@ -177,7 +177,7 @@
     <message>
         <location filename="mainwindow.cpp" line="158"/>
         <source>Avg number of rounds: %1</source>
-        <translation type="unfinished">Średnia liczba walk: %1</translation>
+        <translation type="unfinished">Średnia liczba rund w walce: %1</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="159"/>
