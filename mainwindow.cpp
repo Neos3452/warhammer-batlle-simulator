@@ -32,7 +32,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_addCharButton_clicked()
+void MainWindow::addNewRow()
 {
     const auto newRowNumber = ui->charTable->rowCount();
     ui->charTable->setRowCount(newRowNumber + 1);
@@ -67,6 +67,11 @@ void MainWindow::on_addCharButton_clicked()
     ui->charTable->setItem(newRowNumber, ui->charTable->columnCount() - 1, item);
 }
 
+void MainWindow::on_addCharButton_clicked()
+{
+    addNewRow();
+}
+
 void MainWindow::on_deleteCharButton_clicked()
 {
     std::set<int, std::greater<int>> rowsToRemove;
@@ -82,6 +87,35 @@ void MainWindow::on_deleteCharButton_clicked()
 void MainWindow::on_clearAllCharButton_clicked()
 {
     ui->charTable->setRowCount(0);
+}
+
+void MainWindow::on_duplicateCharButton_clicked()
+{
+    std::set<int, std::greater<int>> rowsToDuplicate;
+    for (const auto *item : ui->charTable->selectedItems()) {
+        rowsToDuplicate.insert(item->row());
+    }
+
+    for (const auto row : rowsToDuplicate) {
+        const auto newRowNumber = ui->charTable->rowCount();
+        addNewRow();
+
+        // Allegiance
+        ui->charTable->item(newRowNumber, 0)->setCheckState(ui->charTable->item(row, 0)->checkState());
+
+        // Character name
+        ui->charTable->item(newRowNumber, 1)->setText(ui->charTable->item(row, 1)->text());
+
+        // Skills
+        for (auto i = 2; i < (ui->charTable->columnCount() - 1); ++i) {
+            qobject_cast<QLineEdit *>(ui->charTable->cellWidget(newRowNumber, i))->setText(
+                qobject_cast<QLineEdit *>(ui->charTable->cellWidget(row, i))->text());
+        }
+
+        // Evade skill
+        ui->charTable->item(newRowNumber, ui->charTable->columnCount() - 1)
+                ->setCheckState(ui->charTable->item(row, ui->charTable->columnCount() - 1)->checkState());
+    }
 }
 
 void MainWindow::on_startStopButton_clicked()

@@ -24,8 +24,10 @@ private slots:
     void on_deleteCharButton_clicked();
     void on_clearAllCharButton_clicked();
     void on_startStopButton_clicked();
+    void on_duplicateCharButton_clicked();
 
 private:
+    void addNewRow();
     void scheduleNewSimulation();
 
     std::atomic<bool> running;
