@@ -3,6 +3,7 @@
 #include "character.h"
 #include "diceroller.h"
 
+#include <atomic>
 #include <vector>
 
 class Simulator {

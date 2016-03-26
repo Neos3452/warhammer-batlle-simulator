@@ -5,8 +5,6 @@
 #include <cassert>
 #include <QDebug>
 
-constexpr const unsigned Character::kActionsPerRound;
-
 Character::Character(bool good, QString name,
     int weaponSkill, int ballisticSkill,
     int strength, int toughness, int agility,

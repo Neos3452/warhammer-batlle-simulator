@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <functional>
 #include <set>
 #include <sstream>
 #include <tuple>
