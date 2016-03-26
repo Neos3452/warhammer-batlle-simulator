@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ostream>
+#include <string>
 
 #include <QString>
 
@@ -8,6 +9,11 @@ class DiceRoller;
 
 class Character {
 public:
+    enum class AttackingWeapon {
+        Melee,
+        Ranged,
+    };
+
     Character(bool good, QString name,
         int weaponSkill,
         int ballisticSkill,
@@ -21,6 +27,9 @@ public:
         int armor,
         bool hasEvadeSkill);
 
+    bool changeAttackingWeapon(AttackingWeapon);
+    bool loadWeapon();
+    bool focusAttack();
     bool attack(const DiceRoller&);
     bool parry(const DiceRoller&);
     bool evade(const DiceRoller&);
@@ -33,6 +42,8 @@ public:
     int initative() const { return agility; }
     bool isGood() const { return good; }
     bool isAlive() const { return currentHp > 0; }
+    bool isWeaponLoaded() const { return weaponLoaded; }
+    AttackingWeapon currentAttackingWeapon() const { return attackingWeapon; }
 
 private:
     static constexpr const unsigned kActionsPerRound = 2;
@@ -58,9 +69,12 @@ private:
     int currentHp;
 
     // state
+    AttackingWeapon attackingWeapon;
+    bool weaponLoaded;
     int actionsRemaining;
     bool didParry;
     bool didEvade;
+    bool isFocused;
 
 public:
     Character *target;

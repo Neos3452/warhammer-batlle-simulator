@@ -3,10 +3,11 @@
 #include <cassert>
 #include <numeric>
 
-Simulator::Simulator(const std::atomic<bool> &runningAllowed, std::vector<Character> chars)
+Simulator::Simulator(const std::atomic<bool> &runningAllowed, std::vector<Character> chars, std::unique_ptr<DiceRoller>&& roller)
     : result(true)
     , roundCount(0)
     , runningAllowed(runningAllowed)
+    , dice(std::move(roller))
     , characters(std::move(chars))
     , alive(characters.begin(), characters.end())
 {
@@ -22,12 +23,13 @@ Simulator::Simulator(const std::atomic<bool> &runningAllowed, std::vector<Charac
 
 bool Simulator::pickTarget(Character &ch)
 {
-    if (!ch.walk()) {
+    // TODO: Don't walk to close target
+    if (ch.currentAttackingWeapon() != Character::AttackingWeapon::Ranged && !ch.walk()) {
         return false;
     }
 
     // randomly pick target
-    int targetIdx = dice.roll(ch.isGood() ? guys.second : guys.first);
+    int targetIdx = dice->roll(ch.isGood() ? guys.second : guys.first);
     const auto it = std::find_if_not(alive.cbegin(), alive.cend(), [&](const Character &target) {
         return ch.isGood() == target.isGood() || --targetIdx;
     });
@@ -60,8 +62,15 @@ bool Simulator::simulate()
             }
 
             assert(ch.target);
+
+            if (!ch.loadWeapon()) {
+                continue;
+            }
+
+            ch.focusAttack();
+
             // we have a target lets hit it
-            if (ch.attack(dice)) {
+            if (ch.attack(*dice)) {
                 if (!ch.target->isAlive()) {
                     if (ch.target->isGood()) {
                         --guys.first;
@@ -77,6 +86,8 @@ bool Simulator::simulate()
                 if (!ch.target->isAlive()) {
                     pickTarget(ch);
                 }
+
+                ch.loadWeapon();
             }
         }
 

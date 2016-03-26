@@ -24,27 +24,50 @@ Character::Character(bool good, QString name,
       name(name),
       wounds(std::max(wounds, 0)),
       currentHp(this->wounds),
+      attackingWeapon(ballisticSkill >= weaponSkill ? AttackingWeapon::Ranged : AttackingWeapon::Melee),
+      weaponLoaded(true), // character starts battle with weapon ready
       target(nullptr)
 {
     newTurn();
 }
 
+bool Character::changeAttackingWeapon(AttackingWeapon weapon)
+{
+    if (weapon != attackingWeapon) {
+        if (!useAction()) {
+            return false;
+        }
+        weaponLoaded = false;
+        attackingWeapon = weapon;
+    }
+    return true;
+}
+
+bool Character::loadWeapon()
+{
+    if (attackingWeapon == AttackingWeapon::Ranged) {
+        if (!useAction()) {
+            return false;
+        }
+        weaponLoaded = true;
+    }
+    return true;
+}
+
 bool Character::attack(const DiceRoller& dice)
 {
     assert(target != nullptr);
+    assert(attackingWeapon != AttackingWeapon::Ranged || weaponLoaded);
 
-    // in case of range weapon we do not have to walk to the target so we can load instead and now attack
-    // TODO: load if not walking
     // attacking action
     if (!useAction()) {
         return false;
     }
 
     // always attack with better skill
-    auto skill = std::max(ballisticSkill > weaponSkill ? ballisticSkill : weaponSkill, 1);
+    auto skill = std::max(attackingWeapon == AttackingWeapon::Ranged ? ballisticSkill : weaponSkill, 1);
 
-    // aim if possible
-    if (useAction()) {
+    if (isFocused) {
         skill += 10;
     }
 
@@ -66,7 +89,7 @@ bool Character::attack(const DiceRoller& dice)
                 }
             }
             // weapon
-            dmg += ballisticSkill > weaponSkill ? rangedWeapon : ((strength/10) + meleeWeapon);
+            dmg += attackingWeapon == AttackingWeapon::Ranged ? rangedWeapon : ((strength/10) + meleeWeapon);
             target->hit(dmg);
         }
     }
@@ -91,6 +114,17 @@ bool Character::evade(const DiceRoller &dice)
     return false;
 }
 
+bool Character::focusAttack()
+{
+    if (!isFocused) {
+        if (!useAction()) {
+            return false;
+        }
+        isFocused = true;
+    }
+    return true;
+}
+
 bool Character::walk()
 {
     return useAction();
@@ -109,10 +143,10 @@ void Character::newTurn()
     actionsRemaining = kActionsPerRound;
     didParry = false;
     didEvade = !hasEvadeSkill;
+    isFocused = false;
 }
 
 void Character::hit(int dmg)
 {
-//    qDebug() << name << " hit " << dmg;
     currentHp -= std::max((dmg - ((toughness/10) + armor)), 0);
 }
