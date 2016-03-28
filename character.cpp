@@ -60,9 +60,10 @@ bool Character::attack(const DiceRoller& dice)
     assert(attackingWeapon != AttackingWeapon::Ranged || weaponLoaded);
 
     // attacking action
-    if (!useAction()) {
+    if (didAttack || !useAction()) {
         return false;
     }
+    didAttack = true;
 
     // always attack with better skill
     auto skill = std::max(attackingWeapon == AttackingWeapon::Ranged ? ballisticSkill : weaponSkill, 1);
@@ -90,7 +91,7 @@ bool Character::attack(const DiceRoller& dice)
                 }
             }
             // weapon
-            dmg += attackingWeapon == AttackingWeapon::Ranged ? rangedWeapon : ((strength/10) + meleeWeapon);
+            dmg += (attackingWeapon == AttackingWeapon::Ranged) ? rangedWeapon : ((strength/10) + meleeWeapon);
             target->hit(dmg);
         }
     }
@@ -145,6 +146,7 @@ void Character::newTurn()
     didParry = false;
     didEvade = !hasEvadeSkill;
     isFocused = false;
+    didAttack = false;
 }
 
 void Character::hit(int dmg)

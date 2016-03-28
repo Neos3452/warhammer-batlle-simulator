@@ -77,6 +77,7 @@ private:
     bool didParry;
     bool didEvade;
     bool isFocused;
+    bool didAttack;
 
 public:
     Character *target;

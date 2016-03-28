@@ -21,7 +21,7 @@ PredeterminedDiceRoller::PredeterminedDiceRoller(std::vector<int> rolls)
 
 int PredeterminedDiceRoller::roll(const int sides) const
 {
-    const auto result = *(nextRoll++) % sides;
+    const auto result = 1 + ((std::max(*(nextRoll++), 1) - 1) % sides);
     if (rolls.cend() == nextRoll) {
         nextRoll = rolls.cbegin();
     }
