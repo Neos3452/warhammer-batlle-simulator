@@ -70,6 +70,8 @@ enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_executable(runUnitTests
     tests.cpp
+    character_tests.cpp
+    simulator_tests.cpp
     ${SRC_LIST}
 )
 target_link_libraries(runUnitTests gtest gtest_main Qt5::Core ${CMAKE_THREAD_LIBS_INIT})

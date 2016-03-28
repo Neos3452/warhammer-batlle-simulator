@@ -39,11 +39,13 @@ public:
     void newTurn();
     void hit(int dmg);
 
+    int remainingActions() const { return actionsRemaining; }
     int initative() const { return agility; }
     bool isGood() const { return good; }
     bool isAlive() const { return currentHp > 0; }
     bool isWeaponLoaded() const { return weaponLoaded; }
     AttackingWeapon currentAttackingWeapon() const { return attackingWeapon; }
+    int health() const { return currentHp; }
 
 private:
     static constexpr const unsigned kActionsPerRound = 2;
