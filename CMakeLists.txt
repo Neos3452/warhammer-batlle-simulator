@@ -15,11 +15,11 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -WExtra -pedantic -WError")
 endif()
 
+find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 
 set(SRC_LIST
-    mainwindow.cpp
     simulator.cpp
     diceroller.cpp
     character.cpp 
@@ -33,6 +33,7 @@ include_directories(${PROJECT_BINARY_DIR})
 
 add_executable(${PROJECT_NAME}
         main.cpp
+        mainwindow.cpp
         ${SRC_LIST}
         ${MOC_LIST}
         ${UI_LIST}
@@ -60,3 +61,17 @@ if(APPLE)
 elseif(UNIX)
     install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/bin")
 endif()
+
+### Tests
+find_package(Threads REQUIRED)
+
+add_subdirectory(googletest)
+enable_testing()
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+add_executable(runUnitTests
+    tests.cpp
+    ${SRC_LIST}
+)
+target_link_libraries(runUnitTests gtest gtest_main Qt5::Core ${CMAKE_THREAD_LIBS_INIT})
+add_test(runUnitTests runUnitTests)
+
