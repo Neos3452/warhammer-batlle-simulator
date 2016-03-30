@@ -41,7 +41,7 @@ bool Simulator::pickTarget(Character &ch)
 bool Simulator::simulate()
 {
     // sort by initative
-    std::sort(alive.begin(), alive.end(), [](const Character &first, const Character &second) { return first.initative() > second.initative(); });
+    std::sort(alive.begin(), alive.end(), [](const Character &first, const Character &second) { return first.initative() < second.initative(); });
 
     while (guys.first > 0 && guys.second > 0) {
         // runningAllowed will be changed from the other thread so we cannot check it at the end of function
@@ -56,7 +56,7 @@ bool Simulator::simulate()
             ch.newTurn();
         }
 
-        for (Character &ch : characters) {
+        for (Character &ch : alive) {
             if ((!ch.target || !ch.target->isAlive()) && !pickTarget(ch)) {
                 continue;
             }

@@ -151,6 +151,15 @@ void MainWindow::on_startStopButton_clicked()
                                ui->charTable->item(row, 12)->checkState() == Qt::Checked);
         }
 
+#ifndef NDEBUG
+        std::stringstream str;
+        str << "Using chars:" << std::endl;
+        for (const auto &ch : simulationCharacters) {
+            str << ch << std::endl;
+        }
+        qDebug() << str.str().c_str();
+#endif
+
         const auto threads = QThreadPool::globalInstance()->maxThreadCount();
         for (int t = 0; t < threads; ++t) {
             scheduleNewSimulation();
@@ -179,6 +188,10 @@ void MainWindow::scheduleNewSimulation()
 void MainWindow::simulationFinished(decltype(simulators)::iterator it)
 {
     if (it->first.result()) {
+        if (running) {
+            scheduleNewSimulation();
+        }
+
         ++battles;
         if (it->second.goodWon()) {
             ++won;
@@ -195,8 +208,5 @@ void MainWindow::simulationFinished(decltype(simulators)::iterator it)
                     .arg((static_cast<double>(totalAtLeastOneGoodDead) / won) * 100, 0, 'f', 2));
         ui->simulationCounter->display(ui->simulationCounter->intValue() + 1);
         simulators.erase(it);
-        if (running) {
-            scheduleNewSimulation();
-        }
     }
 }
