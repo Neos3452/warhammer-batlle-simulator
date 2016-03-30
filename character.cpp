@@ -74,8 +74,12 @@ bool Character::attack(const DiceRoller& dice)
 
     skill = std::min(skill, 99);
 
-    // hit enemy with all attacks
-    for (int attackCounter = attacks; attackCounter > 0; --attackCounter) {
+    // hit enemy with all attacks if there is extra action
+    int attackCounter = attacks;
+    if (attackCounter > 1 && !useAction()) {
+        attackCounter = 1;
+    }
+    for (; attackCounter > 0; --attackCounter) {
         const auto roll = dice.roll(100);
         if (roll <= skill && (attackingWeapon == AttackingWeapon::Ranged
             || (!target->parry(dice) && !target->evade(dice)))) {

@@ -67,7 +67,9 @@ bool Simulator::simulate()
                 continue;
             }
 
-            ch.focusAttack();
+            if (ch.numberOfAttacks() == 1 && ch.remainingActions() > 1) {
+                ch.focusAttack();
+            }
 
             // we have a target lets hit it
             if (ch.attack(*dice)) {
