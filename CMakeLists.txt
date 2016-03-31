@@ -31,7 +31,7 @@ qt5_add_resources(RSC_LIST ${PROJECT_SOURCE_DIR}/resources.qrc)
 
 include_directories(${PROJECT_BINARY_DIR})
 
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME} WIN32
         main.cpp
         mainwindow.cpp
         ${SRC_LIST}

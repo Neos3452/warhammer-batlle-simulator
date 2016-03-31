@@ -1,5 +1,6 @@
 #include "diceroller.h"
 
+#include <algorithm>
 #include <cassert>
 
 RandomDiceRoller::RandomDiceRoller()

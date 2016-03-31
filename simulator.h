@@ -9,7 +9,7 @@
 
 class Simulator {
 public:
-    Simulator(const std::atomic<bool> &runningAllowed, std::vector<Character> chars, std::unique_ptr<DiceRoller>&& = std::make_unique<RandomDiceRoller>());
+    Simulator(const std::atomic<bool> &runningAllowed, std::vector<Character> chars, std::unique_ptr<DiceRoller>&&);
 
     Simulator(Simulator&&) = default;
 

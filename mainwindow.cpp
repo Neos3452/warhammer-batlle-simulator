@@ -175,7 +175,7 @@ void MainWindow::scheduleNewSimulation()
 {
     simulators.emplace_back(std::piecewise_construct,
                             std::tuple<>(),
-                            std::make_tuple(std::cref(running), simulationCharacters));
+                            std::make_tuple(std::cref(running), simulationCharacters, std::make_unique<RandomDiceRoller>()));
 
     auto& simulator = simulators.back();
 
